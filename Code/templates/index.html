@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cargar imagen</title>
+</head>
+<style>
+    /* Esto es un comentario de CSS */
+    /* Define el color de fondo del cuerpo */
+    body {
+        background-color: lightblue;
+    }
+
+    /* Define el color y la alineación del encabezado */
+    h1 {
+        color: white;
+        text-align: center;
+    }
+
+    /* Define el color y el tamaño del párrafo */
+    p {
+        color: navy;
+        font-size: 18px;
+    }
+
+    /* Define el estilo del botón */
+    button {
+        background-color: green;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+    }
+
+    /* Define el estilo de la imagen */
+    img {
+        max-width: 100px;
+        max-height: 100px;
+        border: 2px solid black;
+    }
+</style>
+
+<body>
+
+    <center>
+        <h1>Connection with neural network for the classification of endothelial cells</h1>
+
+    </center>
+    <h3>Welcome to our website, where you can use artificial intelligence to classify cells into three different
+        types. To use this service, you only need to follow these simple steps:</h3>
+
+    <ol>
+        <li>
+            Click on the Browse button and select the image of the cell that you want to classify.
+        </li>
+        <li>
+            Click on the Submit button and wait for the results.
+
+        </li>
+        <li>
+            You will see the name and description of the cell type that our AI has identified, as well as the
+            confidence
+            score.
+        </li>
+    </ol>
+
+    <h5>
+        We hope you enjoy this website and find it useful for your research or education. If you have any questions
+        or feedback, please contact us at info@cellclassifier.com. Thank you for using our service!</p>
+    </h5>
+    <form action="/procesar_imagen" method="POST" enctype="multipart/form-data">
+        <label for="imagen">Load Image</label>
+        <input type="file" name="image" id="imageInput" accept="image/*">
+        <br>
+        <br>
+        <img src="#" alt="Image" id="img_a" style="max-width: 300px; max-width: 300px;border: 2px solid black;">
+        <br>
+        <br>
+        <br>
+
+        <button type="button" onclick="submitImage()">Send</button>
+    </form>
+    <h4 class="label">Waiting...</h4>
+    <script defer>
+        document.getElementById('imageInput').addEventListener("change", function () {
+            var file = this.files[0];
+            var imageDisplay = document.getElementById("img_a")
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imageDisplay.src = e.target.result;
+            }
+            reader.readAsDataURL(file)
+        })
+        async function submitImage() {
+            img = document.getElementById('imageInput').files[0]
+
+            const formData = new FormData();
+            formData.append('image', img)
+
+            const response = await fetch('/procesar_imagen', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json()
+
+            label = document.querySelector(".label")
+            if (result["predict"] == 0) {
+                resu = 'Circular'
+            } else if (result["predict"] == 1) {
+                resu = 'Alargada'
+            } else if (result["predict"] == 2) {
+                resu = 'Deformada'
+            }
+
+            label.textContent = "Predict:" + resu;
+
+        }
+
+    </script>
+
+
+
+
+
+
+
+    <!-- <script src="script.js"></script> -->
+</body>
+
+</html>
